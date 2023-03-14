@@ -1,5 +1,6 @@
 import asyncio
 import datetime
+import pathlib
 
 import websockets
 
@@ -8,16 +9,23 @@ max_file_size = 20 * 1_000_000
 VIEWERS = set()
 
 
+def get_new_output_file():
+    filename = f"{datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.h264.enc"
+    output_file = pathlib.Path(f"records/{filename}")
+    output_file.parent.mkdir(exist_ok=True, parents=True)
+    return output_file.open("wb")
+
+
 async def handle_camera_client(websocket):
     global VIEWERS
 
     current_file_size = 0
-    current_file = open(f"{datetime.datetime.now().isoformat(timespec='seconds')}.h264.enc", "wb")
+    current_file = get_new_output_file()
 
     async for frame in websocket:
         if current_file_size + len(frame) > max_file_size:
             current_file.close()
-            current_file = open(f"{datetime.datetime.now().isoformat(timespec='seconds')}.h264.enc", "wb")
+            current_file = get_new_output_file()
             current_file_size = 0
 
         current_file.write(frame)
