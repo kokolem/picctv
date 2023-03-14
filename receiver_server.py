@@ -3,10 +3,14 @@ import datetime
 
 import websockets
 
-max_file_size = 50 * 1_000_000
+max_file_size = 20 * 1_000_000
+
+VIEWERS = set()
 
 
-async def save_frame(websocket):
+async def handle_camera_client(websocket):
+    global VIEWERS
+
     current_file_size = 0
     current_file = open(f"{datetime.datetime.now().isoformat(timespec='seconds')}.h264.enc", "wb")
 
@@ -22,9 +26,25 @@ async def save_frame(websocket):
 
         current_file_size += len(frame)
 
+        websockets.broadcast(VIEWERS, frame)
+
+    current_file.close()
+
+
+async def handle_connection(websocket):
+    client_type = await websocket.recv()
+    if client_type == "camera":
+        await handle_camera_client(websocket)
+    elif client_type == "viewer":
+        VIEWERS.add(websocket)
+        try:
+            await websocket.wait_closed()
+        finally:
+            VIEWERS.remove(websocket)
+
 
 async def run_server():
-    async with websockets.serve(save_frame, "0.0.0.0", 8765):
+    async with websockets.serve(handle_connection, "0.0.0.0", 8765):
         await asyncio.Future()
 
 

@@ -67,6 +67,7 @@ picam2.start()
 
 async def send_frames():
     async with websockets.connect("ws://192.168.0.88:8765") as websocket:
+        await websocket.send("camera")
         async for frame in camera_output:
             await websocket.send(frame)
 

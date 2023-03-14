@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>PICCTV Live</title>
+</head>
+<body>
+<div id="app">
+    <form id="input" onsubmit="return false">
+        <label for="camera_public_key">Camera public key (hex):</label>
+        <input type="text" id="camera_public_key">
+        <label for="viewer_private_key">Viewer private key (hex):</label>
+        <input type="text" id="viewer_private_key">
+        <label for="address">Server address:</label>
+        <input type="url" id="address">
+        <input type="submit" value="Start stream">
+    </form>
+    <div style="margin: 0 auto; text-align: center;">
+        <video id="player" autoplay></video>
+    </div>
+</div>
+<script type="module" src="/main.js"></script>
+</body>
+</html>
