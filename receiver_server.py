@@ -1,10 +1,12 @@
 import asyncio
 import datetime
+import os.path
 import pathlib
 
 import websockets
 
 max_file_size = 20 * 1_000_000
+max_files = 5
 
 VIEWERS = set()
 
@@ -16,17 +18,29 @@ def get_new_output_file():
     return output_file.open("wb")
 
 
+def delete_oldest_record_if_max_records_reached():
+    records_dir = pathlib.Path("records")
+    records = list(records_dir.iterdir())
+    while len(records) > max_files:
+        oldest_record = min(records, key=os.path.getmtime)
+        oldest_record.unlink()
+        records = list(records_dir.iterdir())
+
+
 async def handle_camera_client(websocket):
     global VIEWERS
 
     current_file_size = 0
     current_file = get_new_output_file()
+    delete_oldest_record_if_max_records_reached()
 
     async for frame in websocket:
         if current_file_size + len(frame) > max_file_size:
             current_file.close()
             current_file = get_new_output_file()
             current_file_size = 0
+
+            delete_oldest_record_if_max_records_reached()
 
         current_file.write(frame)
         current_file.write(b"--FRAME")
