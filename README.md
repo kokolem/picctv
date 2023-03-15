@@ -98,10 +98,11 @@ Po zadání hodnot a kliknutí na tlačítko `Start stream` začne živý přeno
 
 ### Dešifrování a přehrání uložených nahrávek
 
+Šifrované nahrávky ze serveru nejprve přeneste na zařízení, na kterém jsou uloženy privátní klíče, abyste je mohli dešifrovat.
+
 Kód pro dešifrování nahrávek se nachází v adresáři [utils](utils). Následující ukázky předpokládají, že se v tomto adresáři nacházíte i vy.
 
-Nahrávky uložené v `records_directory` (viz konfigurace serveru) jsou šifrované. Pro jejich přehrání je třeba je dešifrovat.
-To lze udělat za pomocí scriptu, takto: `python decryptor.py nahravka.h264.enc`. Script načte soubory `camera_public.key`
+Dešifrování lze provést za pomocí scriptu, takto: `python decryptor.py nahravka.h264.enc`. Script načte soubory `camera_public.key`
 a `receiver_private.key` a dešifruje nahrávku `nahravka.h264.enc`. Výsledek uloží do souboru `nahravka.h264` (odstraní příponu `.enc`).
 
 Dešifrovaná nahrávka je stream H.264 framů. Lze ji přehrát například pomocí programu ffplay: `ffplay nahravka.h264`.
