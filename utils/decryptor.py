@@ -1,12 +1,13 @@
 import sys
 
+from nacl.encoding import HexEncoder
 from nacl.public import PrivateKey, Box, PublicKey
 
 with open("camera_public.key", "rb") as camera_public_key_file:
-    camera_public_key = PublicKey(camera_public_key_file.read())
+    camera_public_key = PublicKey(camera_public_key_file.read(), encoder=HexEncoder)
 
 with open("receiver_private.key", "rb") as receiver_private_key_file:
-    receiver_private_key = PrivateKey(receiver_private_key_file.read())
+    receiver_private_key = PrivateKey(receiver_private_key_file.read(), encoder=HexEncoder)
 
 decryptor = Box(receiver_private_key, camera_public_key)
 
