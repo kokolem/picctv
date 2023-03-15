@@ -5,23 +5,23 @@ import pathlib
 
 import websockets
 
-max_file_size = 20 * 1_000_000
-max_files = 5
+from config_parser import config
+
 
 VIEWERS = set()
 
 
 def get_new_output_file():
     filename = f"{datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.h264.enc"
-    output_file = pathlib.Path(f"records/{filename}")
+    output_file = pathlib.Path(f"{config.records_directory}/{filename}")
     output_file.parent.mkdir(exist_ok=True, parents=True)
     return output_file.open("wb")
 
 
 def delete_oldest_record_if_max_records_reached():
-    records_dir = pathlib.Path("records")
+    records_dir = pathlib.Path(config.records_directory)
     records = list(records_dir.iterdir())
-    while len(records) > max_files:
+    while len(records) > config.max_recording_files:
         oldest_record = min(records, key=os.path.getmtime)
         oldest_record.unlink()
         records = list(records_dir.iterdir())
@@ -35,7 +35,7 @@ async def handle_camera_client(websocket):
     delete_oldest_record_if_max_records_reached()
 
     async for frame in websocket:
-        if current_file_size + len(frame) > max_file_size:
+        if current_file_size + len(frame) > config.max_recording_file_size:
             current_file.close()
             current_file = get_new_output_file()
             current_file_size = 0
@@ -66,7 +66,7 @@ async def handle_connection(websocket):
 
 
 async def run_server():
-    async with websockets.serve(handle_connection, "0.0.0.0", 8765):
+    async with websockets.serve(handle_connection, "0.0.0.0", config.server_port):
         await asyncio.Future()
 
 

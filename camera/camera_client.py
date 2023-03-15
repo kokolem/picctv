@@ -2,16 +2,16 @@ import asyncio
 from threading import Condition
 
 import websockets as websockets
+from nacl.encoding import HexEncoder
 from nacl.public import PrivateKey, Box, PublicKey
 from picamera2 import Picamera2
-from picamera2.encoders import H264Encoder, Quality
+from picamera2.encoders import H264Encoder
 from picamera2.outputs import Output
 
-with open("receiver_public.key", "rb") as receiver_public_key_file:
-    receiver_public_key = PublicKey(receiver_public_key_file.read())
+from config_parser import config
 
-with open("camera_private.key", "rb") as camera_private_key_file:
-    camera_private_key = PrivateKey(camera_private_key_file.read())
+receiver_public_key = PublicKey(config.receiver_public_key_hex, encoder=HexEncoder)
+camera_private_key = PrivateKey(config.camera_private_key_hex, encoder=HexEncoder)
 
 encryptor = Box(camera_private_key, receiver_public_key)
 
@@ -58,15 +58,15 @@ class AsyncIterableOutput(Output):
 
 
 picam2 = Picamera2()
-picam2.configure(picam2.create_video_configuration(main={"size": (1296, 972)}))
+picam2.configure(picam2.create_video_configuration(main={"size": (config.video_width, config.video_height)}))
 camera_output = AsyncIterableOutput()
 encoder = H264Encoder()
-picam2.start_encoder(encoder, camera_output, quality=Quality.VERY_HIGH)
+picam2.start_encoder(encoder, camera_output, quality=config.video_quality)
 picam2.start()
 
 
 async def send_frames():
-    async with websockets.connect("ws://192.168.0.88:8765") as websocket:
+    async with websockets.connect(config.server_address) as websocket:
         await websocket.send("camera")
         async for frame in camera_output:
             await websocket.send(frame)
