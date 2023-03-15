@@ -10,15 +10,20 @@ Projekt je rozdělen na tři části: kamera, server a prohlížečová aplikace
 
 ### Vygenerování klíčů
 
-Nejprve je třeba vygenerovat šifrovací klíče. To lze udělat jednodušše za použí scriptu, takto:
-`python utils/generate_keys.py`. Klíče jsou čtyři, dva (privátní a veřejný) pro kameru a dva pro příjemce obrazu z
+Kód pro generování klíčů se nachází v adresáři [utils](utils). Následující ukázky předpokládají, že se v tomto adresáři nacházíte i vy.
+
+Klíče lze vygenerovat jednodušše za použí scriptu, takto: `python generate_keys.py`.
+
+Klíče jsou čtyři, dva (privátní a veřejný) pro kameru a dva pro příjemce obrazu z
 kamery.
 Uloží se do souborů `camera_private.key`, `camera_public.key`, `receiver_private.key` a `receiver_public.key`.
 Aby šifrování bylo smysluplné, privátní klíče musí být uchovávány na bezpečném místě.
 
 ### Nastavení serveru
 
-Kód pro server se nachází v adresáři [server](server). Před spuštěním je nejprve potřeba vytvořit konfigurační
+Kód pro server se nachází v adresáři [server](server). Následující ukázky předpokládají, že se v tomto adresáři nacházíte i vy.
+
+Před spuštěním je nejprve potřeba vytvořit konfigurační
 soubor `server_config.json`.
 V něm musí být definovány tyto hodnoty:
 
@@ -46,7 +51,9 @@ Server lze spustit takto: `python receiver_server.py`.
 
 ### Nastavení kamery
 
-Kód pro kameru se nachází v adresáři [camera](camera). Před spuštěním je nejprve potřeba vytvořit konfigurační
+Kód pro kameru se nachází v adresáři [camera](camera). Následující ukázky předpokládají, že se v tomto adresáři nacházíte i vy.
+
+Před spuštěním je nejprve potřeba vytvořit konfigurační
 soubor `camera_config.json`. V něm musí být definovány tyto hodnoty:
 
 * `receiver_public_key_hex`: Veřejný klíč přijemce obrazu z kamery (zkopírováno z `receiver_public.key`)
@@ -77,8 +84,9 @@ Odesílání obrazu lze spustit takto: `python camera_client.py`
 
 ### Sledování živého přenosu
 
-Kód prohlížečové aplikace pro živé sledování se nachází v adresáři [viewer-live](viewer-live). Lze ji spustit příkazem `npm run dev`.
-Aplikace po spuštění vyžaduje zadání tří hodnot:
+Kód prohlížečové aplikace pro živé sledování se nachází v adresáři [viewer-live](viewer-live). Následující ukázky předpokládají, že se v tomto adresáři nacházíte i vy.
+
+Aplikaci lze spustit příkazem `npm run dev`.  Po spuštění bude vyžadovat zadání tří hodnot:
 
 * Camera public key (hex): Veřejný klíč kamery (zkopírováno z `camera_public.key`)
 * Viewer private key (hex): Privátní klíč příjemce obrazu z kamery (zkopírováno z `receiver_private.key`)
@@ -88,8 +96,10 @@ Po zadání hodnot a kliknutí na tlačítko `Start stream` začne živý přeno
 
 ### Dešifrování a přehrání uložených nahrávek
 
+Kód pro dešifrování nahrávek se nachází v adresáři [utils](utils). Následující ukázky předpokládají, že se v tomto adresáři nacházíte i vy.
+
 Nahrávky uložené v `records_directory` (viz konfigurace serveru) jsou šifrované. Pro jejich přehrání je třeba je dešifrovat.
-To lze udělat za pomocí scriptu, takto: `python utils/decryptor.py nahravka.h264.enc`. Script načte soubory `camera_public.key`
+To lze udělat za pomocí scriptu, takto: `python decryptor.py nahravka.h264.enc`. Script načte soubory `camera_public.key`
 a `receiver_private.key` a dešifruje nahrávku `nahravka.h264.enc`. Výsledek uloží do souboru `nahravka.h264` (odstraní příponu `.enc`).
 
 Dešifrovaná nahrávka je stream H.264 framů. Lze ji přehrát například pomocí programu ffplay: `ffplay nahravka.h264`.
