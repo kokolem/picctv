@@ -17,7 +17,9 @@ Klíče lze vygenerovat jednodušše za použí scriptu, takto: `python generate
 Klíče jsou čtyři, dva (privátní a veřejný) pro kameru a dva pro příjemce obrazu z
 kamery.
 Uloží se do souborů `camera_private.key`, `camera_public.key`, `receiver_private.key` a `receiver_public.key`.
-Aby šifrování bylo smysluplné, privátní klíče musí být uchovávány na bezpečném místě.
+
+Aby šifrování bylo smysluplné, privátní klíče musí být uchovávány na bezpečném místě (tedy určitě ne na stejném 
+zařízení, jako na kterém poběží server).
 
 ### Nastavení serveru
 
