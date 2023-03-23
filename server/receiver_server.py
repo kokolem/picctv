@@ -96,6 +96,7 @@ async def handle_connection(websocket):
 
 async def run_server():
     async with websockets.serve(handle_connection, "0.0.0.0", config.server_port):
+        print("Server started")
         await asyncio.Future()
 
 
