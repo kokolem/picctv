@@ -67,7 +67,7 @@ picam2.start()
 
 async def send_frames():
     async with websockets.connect(config.server_address) as websocket:
-        await websocket.send("camera")
+        await websocket.send(f"camera:{config.password}")
         async for frame in camera_output:
             await websocket.send(frame)
 

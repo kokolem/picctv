@@ -13,8 +13,8 @@ class Config(BaseSettings):
     max_recording_files: int
     records_directory: str
     server_port: int
-    camera_password_hash: str
-    viewer_password_hash: str
+    camera_password_hash: bytes
+    viewer_password_hash: bytes
 
 
 config = Config(**load_config_json())

@@ -4,6 +4,8 @@ import os.path
 import pathlib
 
 import websockets
+from nacl import pwhash
+from nacl.exceptions import InvalidkeyError
 
 from config_parser import config
 
@@ -54,10 +56,37 @@ async def handle_camera_client(websocket):
 
 
 async def handle_connection(websocket):
-    client_type = await websocket.recv()
+    client_auth = await websocket.recv()
+    client_type, _, password = client_auth.partition(":")
+    password = password.encode()
+
+    if not password:
+        await websocket.close()
+        print("No password received")
+        return
+
     if client_type == "camera":
+        try:
+            pwhash.verify(config.camera_password_hash, password)
+        except InvalidkeyError:
+            await websocket.close()
+            print("Invalid camera password")
+            return
+
+        print("Camera connected")
+
         await handle_camera_client(websocket)
+
     elif client_type == "viewer":
+        try:
+            pwhash.verify(config.viewer_password_hash, password)
+        except InvalidkeyError:
+            await websocket.close()
+            print("Invalid viewer password")
+            return
+
+        print("Viewer connected")
+
         VIEWERS.add(websocket)
         try:
             await websocket.wait_closed()

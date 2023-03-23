@@ -4,7 +4,7 @@ import { Base64 } from 'js-base64';
 
 let sodium = null
 
-function startLivestream(camera_public_key, viewer_private_key, address) {
+function startLivestream(camera_public_key, viewer_private_key, address, password) {
     const jmuxer = new JMuxer({
         node: "player",
         mode: "video",
@@ -17,7 +17,7 @@ function startLivestream(camera_public_key, viewer_private_key, address) {
     websocket.binaryType = "arraybuffer"
 
     websocket.onopen = () => {
-        websocket.send("viewer")
+        websocket.send(`viewer:${password}`)
     }
 
     websocket.onmessage = ({data}) => {
@@ -64,7 +64,7 @@ function getInputValuesAndStartStream() {
         const camera_public_key_ciphertext = camera_public_key_wrapped.slice(sodium.crypto_secretbox_NONCEBYTES)
         const camera_public_key = sodium.crypto_secretbox_open_easy(camera_public_key_ciphertext, camera_public_key_nonce, viewer_key_wrapping_key)
 
-        startLivestream(camera_public_key, viewer_private_key, address)
+        startLivestream(camera_public_key, viewer_private_key, address, password)
     }
     reader.readAsText(viewer_config_file)
 }
