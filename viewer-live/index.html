@@ -8,10 +8,10 @@
 <body>
 <div id="app">
     <form id="input" onsubmit="return false">
-        <label for="camera_public_key">Camera public key (hex):</label>
-        <input type="text" id="camera_public_key">
-        <label for="viewer_private_key">Viewer private key (hex):</label>
-        <input type="text" id="viewer_private_key">
+        <label for="viewer_config_file">viewer_config.json:</label>
+        <input type="file" id="viewer_config_file">
+        <label for="viewer_password">Password:</label>
+        <input type="password" id="viewer_password">
         <label for="address">Server address:</label>
         <input type="url" id="address">
         <input type="submit" value="Start stream">

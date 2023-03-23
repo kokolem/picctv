@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "jmuxer": "^2.0.5",
-    "libsodium-wrappers": "^0.7.11"
+    "js-base64": "^3.7.5",
+    "libsodium-wrappers-sumo": "^0.7.11"
   }
 }
