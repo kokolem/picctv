@@ -10,7 +10,7 @@ from picamera2.outputs import Output
 
 from config_parser import config
 
-receiver_public_key = PublicKey(config.receiver_public_key_hex, encoder=HexEncoder)
+receiver_public_key = PublicKey(config.viewer_public_key_hex, encoder=HexEncoder)
 camera_private_key = PrivateKey(config.camera_private_key_hex, encoder=HexEncoder)
 
 encryptor = Box(camera_private_key, receiver_public_key)

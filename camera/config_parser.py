@@ -10,12 +10,13 @@ def load_config_json():
 
 
 class Config(BaseSettings):
-    receiver_public_key_hex: str
+    viewer_public_key_hex: str
     camera_private_key_hex: str
     video_height: int
     video_width: int
     video_quality: Quality
     server_address: str
+    password: str
 
 
 config = Config(**load_config_json())
