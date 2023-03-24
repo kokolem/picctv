@@ -64,6 +64,8 @@ function getInputValuesAndStartStream() {
         const camera_public_key_ciphertext = camera_public_key_wrapped.slice(sodium.crypto_secretbox_NONCEBYTES)
         const camera_public_key = sodium.crypto_secretbox_open_easy(camera_public_key_ciphertext, camera_public_key_nonce, viewer_key_wrapping_key)
 
+        document.getElementById("input").style.display = "none"
+
         startLivestream(camera_public_key, viewer_private_key, address, password)
     }
     reader.readAsText(viewer_config_file)

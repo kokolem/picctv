@@ -4,22 +4,61 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>PICCTV Live</title>
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+        #input {
+            text-align: center;
+            padding: 20px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            display: inline-block;
+        }
+        #input > label {
+            display: inline-block;
+            width: 150px;
+            text-align: left;
+            margin-bottom: 10px;
+        }
+        #input > input {
+            margin: 8px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 200px;
+        }
+        #input > input[type="submit"] {
+            background-color: #008CBA;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #input > input[type="submit"]:hover {
+            background-color: #0070A3;
+        }
+        #app {
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
-<div id="app">
-    <form id="input" onsubmit="return false">
-        <label for="viewer_config_file">viewer_config.json:</label>
-        <input type="file" id="viewer_config_file">
-        <label for="viewer_password">Password:</label>
-        <input type="password" id="viewer_password">
-        <label for="address">Server address:</label>
-        <input type="url" id="address">
-        <input type="submit" value="Start stream">
-    </form>
-    <div style="margin: 0 auto; text-align: center;">
-        <video id="player" autoplay></video>
+    <div id="app">
+        <form id="input" onsubmit="return false">
+            <label for="viewer_config_file">viewer_config.json:</label>
+            <input type="file" id="viewer_config_file"> <br>
+            <label for="viewer_password">Password:</label>
+            <input type="password" id="viewer_password"> <br>
+            <label for="address">Server address:</label>
+            <input type="url" id="address"> <br>
+            <input type="submit" value="Start stream">
+        </form>
+        <div style="margin: 0 auto; text-align: center;">
+            <video id="player" autoplay></video>
+        </div>
     </div>
-</div>
-<script type="module" src="/main.js"></script>
+    <script type="module" src="/main.js"></script>
 </body>
 </html>
