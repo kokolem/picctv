@@ -2,6 +2,8 @@ import asyncio
 import datetime
 import os.path
 import pathlib
+import ssl
+import sys
 
 import websockets
 from nacl import pwhash
@@ -95,9 +97,20 @@ async def handle_connection(websocket):
 
 
 async def run_server():
-    async with websockets.serve(handle_connection, "0.0.0.0", config.server_port):
-        print("Server started")
-        await asyncio.Future()
+    try:
+        ssl_cert = sys.argv[1]
+        ssl_key = sys.argv[2]
+    except IndexError:
+        async with websockets.serve(handle_connection, "0.0.0.0", config.server_port):
+            print("Server started")
+            await asyncio.Future()
+    else:
+        ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+        ssl_context.load_cert_chain(ssl_cert, ssl_key)
+        async with websockets.serve(handle_connection, "0.0.0.0", config.server_port, ssl=ssl_context):
+            print("Server started with TLS enabled")
+            await asyncio.Future()
+
 
 
 asyncio.run(run_server())
