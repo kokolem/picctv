@@ -1,6 +1,6 @@
 import _sodium from 'libsodium-wrappers-sumo'
 import JMuxer from "jmuxer";
-import { Base64 } from 'js-base64';
+import {Base64} from 'js-base64';
 
 let sodium = null
 
@@ -32,6 +32,13 @@ function startLivestream(camera_public_key, viewer_private_key, address, passwor
     }
 }
 
+function unwrapKey(wrapped_key_b64, wrapping_key) {
+    const uint8array_wrapped = Base64.toUint8Array(wrapped_key_b64.replace(/_/g, '/').replace(/-/g, '+'))
+    const nonce = uint8array_wrapped.slice(0, sodium.crypto_secretbox_NONCEBYTES)
+    const ciphertext = uint8array_wrapped.slice(sodium.crypto_secretbox_NONCEBYTES)
+    return sodium.crypto_secretbox_open_easy(ciphertext, nonce, wrapping_key)
+}
+
 function getInputValuesAndStartStream() {
     const viewer_config_file = document.getElementById("viewer_config_file").files[0]
     const password = document.getElementById("viewer_password").value
@@ -45,7 +52,7 @@ function getInputValuesAndStartStream() {
         const ops = viewer_config.ops
         const mem = viewer_config.mem
 
-        const viewer_key_wrapping_key = sodium.crypto_pwhash(
+        const wrapping_key = sodium.crypto_pwhash(
             sodium.crypto_secretbox_KEYBYTES,
             password,
             salt,
@@ -54,15 +61,8 @@ function getInputValuesAndStartStream() {
             sodium.crypto_pwhash_ALG_ARGON2I13
         )
 
-        const viewer_private_key_wrapped = Base64.toUint8Array(viewer_config.viewer_private_key_wrapped_b64.replace(/_/g, '/').replace(/-/g, '+'))
-        const viewer_private_key_nonce = viewer_private_key_wrapped.slice(0, sodium.crypto_secretbox_NONCEBYTES)
-        const viewer_private_key_ciphertext = viewer_private_key_wrapped.slice(sodium.crypto_secretbox_NONCEBYTES)
-        const viewer_private_key = sodium.crypto_secretbox_open_easy(viewer_private_key_ciphertext, viewer_private_key_nonce, viewer_key_wrapping_key)
-
-        const camera_public_key_wrapped = Base64.toUint8Array(viewer_config.camera_public_key_wrapped_b64.replace(/_/g, '/').replace(/-/g, '+'))
-        const camera_public_key_nonce = camera_public_key_wrapped.slice(0, sodium.crypto_secretbox_NONCEBYTES)
-        const camera_public_key_ciphertext = camera_public_key_wrapped.slice(sodium.crypto_secretbox_NONCEBYTES)
-        const camera_public_key = sodium.crypto_secretbox_open_easy(camera_public_key_ciphertext, camera_public_key_nonce, viewer_key_wrapping_key)
+        const viewer_private_key = unwrapKey(viewer_config.viewer_private_key_wrapped_b64, wrapping_key)
+        const camera_public_key = unwrapKey(viewer_config.camera_public_key_wrapped_b64, wrapping_key)
 
         document.getElementById("input").style.display = "none"
 
